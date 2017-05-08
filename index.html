@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Incentives Calculator</title>
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <style type="text/css">
+    body { min-width: 600px; }
+    .margin-bottom { margin-bottom: 10px; }
+    .table { min-height: 91px; }
+    .input-group-addon { border: 1px solid #9a9a9a; border-right: 0; }
+    .form-control { background-color: #f1f1f1; border: 1px solid #9a9a9a; }
+    .active { background-color: #ffffff; }
+  </style>
+</head>
+<body ng-cloak ng-controller="home">
+  <div class="container">
+    <div class="page-header">
+      <h1>Incentive Calculator</h1>
+      <p class = "alert alert-{{alertClass}}">{{alertMessage}}</p>
+      <div class="row">
+        <div class="col-md-6 col-xs-6">
+          <div class="input-group">
+            <span class="input-group-addon">
+              <input type="radio" value="below60" tabindex="-1" ng-model="tenure">
+            </span>
+            <span class="form-control active">Below 60 days</span>
+          </div>
+        </div>
+        <div class="col-md-6 col-xs-6">
+          <div class="input-group">
+            <span class="input-group-addon">
+              <input type="radio" value="above60" tabindex="-1" ng-model="tenure">
+            </span>
+            <span class="form-control active">Above 60 days</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h4>Today's metrics</h4>
+    <div class="row">
+      <div class="col-md-3 col-xs-6">
+        <div class="input-group margin-bottom">
+          <div class="input-group-addon">Sales</div>
+          <span class="form-control">{{ sales }}</span>
+        </div>
+      </div>
+      <div class="col-md-3 col-xs-6">
+        <div class="input-group margin-bottom">
+          <div class="input-group-addon"><strong>Calls</strong></div>
+          <input type="number" min="0" tabindex="-1" class="form-control active" ng-model="calls">
+          <div class="input-group-btn"><button type="button" tabindex="-1" ng-click="calls = calls + 1" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span></button></div>
+        </div>
+      </div>
+      <div class="col-md-3 col-xs-6">
+        <div class="input-group">
+          <div class="input-group-addon">Revenue</div>
+          <span class="form-control">{{ revenue | currency }}</span>
+        </div>
+      </div>
+      <div class="col-md-3 col-xs-6">
+        <div class="input-group">
+          <div class="input-group-addon">Conversion</div>
+          <span class="form-control alert-{{alertClass}}">{{ conversion * 100 | number:2 }}%</span>
+        </div>
+      </div>
+    </div>
+    <h4>Daily Bonus</h4>
+    <div class="row">
+      <div class="col-md-4 col-xs-4">
+        <div class="input-group">
+          <div class="input-group-addon">Your Bonus</div>
+          <span class="form-control">{{ bonus | currency }}</span>
+        </div>
+      </div>
+      <div class="col-md-4 col-xs-4">
+        <div class="input-group">
+          <div class="input-group-addon">Above {{ nextBracket * 100 | number:0 }}%</div>
+          <span class="form-control">{{ nextBonus | currency }}</span>
+        </div>
+      </div>
+      <div class="col-md-4 col-xs-4">
+        <div class="input-group">
+          <div class="input-group-addon">Above {{ maxBracket * 100 | number:0}}%</div>
+          <span class="form-control">{{ maxBonus | currency }}</span>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <h4>Add a sale</h4>
+    <div class="row">
+      <div class="col-md-4 col-xs-4">
+        <div class="input-group">
+          <div class="input-group-addon">
+            <strong>Sale number</strong>
+          </div>
+          <input type="number" id="saleNumber" min="0" tabindex="1" class="form-control active" ng-model="saleNumber">
+          <div class="input-group-btn"><button type="button" tabindex="-1" ng-click="saleNumber > 0 ? saleNumber = saleNumber - 1 : 0" class="btn btn-warning"><span class="glyphicon glyphicon-minus"></span></button></div>
+        </div>
+      </div>
+      <div class="col-md-4 col-xs-4">
+        <div class="input-group">
+          <div class="input-group-addon">
+            <strong>Sale revenue</strong>
+          </div>
+          <input type="number" min="0" tabindex="2"  class="form-control active" ng-model="saleRevenue" autofocus>
+          <div class="input-group-btn"><button type="button" tabindex="-1" class="btn btn-default" ng-click="changeCurrency()"><strong>{{currency}}</strong></span></button></div>
+        </div>
+      </div>
+      <div class="col-md-4 col-xs-4">
+        <button type="button" tabindex="3" ng-click="addSale()" class="btn btn-success">
+          Add <span class="glyphicon glyphicon-plus"></span>
+        </button>
+      </div>
+    </div>
+    <div class="table">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Sale no.</th>
+            <th>Revenue</th>
+            <th>Options</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-ng-repeat="sale in salesCollection">
+            <th scope="row">{{ sale.number }}</th>
+            <td>{{ sale.revenue | currency }}</td>
+            <td>
+              <button type="button" tabindex="-1" ng-click="removeSale($index)" class="btn btn-danger">
+                <span class="glyphicon glyphicon-remove"></span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="row">
+      <p>By <a href="https://brennedith.com" target="_blank">Brennedith García</a></p>
+    </div>
+  </div>
+  <script src="/js/angular.min.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/paystructure.js"></script>
+  <script src="/js/messages.js"></script>
+</body>
+</html>
